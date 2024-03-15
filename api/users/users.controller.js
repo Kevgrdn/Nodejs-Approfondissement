@@ -3,6 +3,7 @@ const UnauthorizedError = require("../../errors/unauthorized");
 const jwt = require("jsonwebtoken");
 const config = require("../../config");
 const usersService = require("./users.service");
+const articleService = require("../articles/articles.service");
 
 class UsersController {
   async getAll(req, res, next) {
@@ -25,9 +26,23 @@ class UsersController {
       next(err);
     }
   }
+  async getArticlesByUserId(req, res, next) {
+    try {
+      const id = req.params.id;
+      const user = await articleService.getArticlesByUser(id);
+      if (!user) {
+        throw new NotFoundError();
+      }
+      res.json(user);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   async create(req, res, next) {
     try {
       const user = await usersService.create(req.body);
+
       user.password = undefined;
       req.io.emit("user:create", user);
       res.status(201).json(user);
@@ -60,6 +75,8 @@ class UsersController {
     try {
       const { email, password } = req.body;
       const userId = await usersService.checkPasswordUser(email, password);
+
+
       if (!userId) {
         throw new UnauthorizedError();
       }

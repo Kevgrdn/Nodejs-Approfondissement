@@ -1,6 +1,9 @@
 const UnauthorizedError = require("../errors/unauthorized");
 const jwt = require("jsonwebtoken");
 const config = require("../config");
+const userService = require("../api/users/users.service");
+const User = require("./../api/users/users.model");
+
 
 module.exports = (req, res, next) => {
   try {
@@ -9,7 +12,10 @@ module.exports = (req, res, next) => {
       throw "not token";
     }
     const decoded = jwt.verify(token, config.secretJwtToken);
-    req.user = decoded;
+
+    const user = User.findOne({ _id: decoded.userId })
+    console.log(user)
+    req.user = user;
     next();
   } catch (message) {
     next(new UnauthorizedError(message));
