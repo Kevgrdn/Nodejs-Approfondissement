@@ -31,6 +31,7 @@ app.use(express.json());
 
 // Public
 app.use("/api/users/:id/articles", articleRouter);
+app.post("/api/users", usersController.create);
 app.post("/login", usersController.login);
 
 // Private

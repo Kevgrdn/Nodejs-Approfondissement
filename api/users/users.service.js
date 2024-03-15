@@ -23,10 +23,10 @@ class UserService {
     if (!user) {
       return false;
     }
-    // const bool = await bcrypt.compare(password, user.password);
-    // if (!bool) {
-    //   return false;
-    // }
+    const bool = await bcrypt.compare(password, user.password);
+    if (!bool) {
+      return false;
+    }
     return user._id;
   }
 }
